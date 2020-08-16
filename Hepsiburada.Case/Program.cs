@@ -12,26 +12,29 @@ namespace Hepsiburada.Case
 
         static void Main(string[] args)
         {
-            bool yeniGezginIslemi = true;
-            var plato = PlatoBilgileriniAl();
+            bool newRoverTransaction = true;
+            var plateau = GetInformationPlateau();
 
-            while (yeniGezginIslemi)
+            while (newRoverTransaction)
             {
-                var gezici = GeziciBilgileriniAl(plato);
+                var rover = GetRoverInformation(plateau);
 
-                gezici.GezgininKonumunuYazdir();
+                rover.PrintLocationRover();
 
-                if (!YeniGezgin())
+                if (!NewRover())
                 {
-                    yeniGezginIslemi = false;
+                    newRoverTransaction = false;
                 }
 
             }
 
-            Console.ReadLine();
         }
 
-        private static bool YeniGezgin()
+        /// <summary>
+        /// Yeni gezgin yerleştirmek istenip istenmediği kullanıcıya sorulur. Gelen cevaba göre true yada false döner geriye.
+        /// </summary>
+        /// <returns>Geriye true yada false döner</returns>
+        private static bool NewRover()
         {
             Console.WriteLine("Yeni gezgin yerleştirmek istiyormusunuz ? Evet(E)");
             return Console.ReadLine().ToUpper() == "E";
@@ -39,27 +42,28 @@ namespace Hepsiburada.Case
 
 
         /// <summary>
-        /// Plato sınırları kullanıcıdan alınıyor.
+        /// Plato sınırları kullanıcıdan alınıyor ve yeni bir plato oluşturulur.
         /// </summary>
-        private static Plato PlatoBilgileriniAl()
+        /// <returns>Geriye plato nesnesi döner</returns>
+        private static Plateau GetInformationPlateau()
         {
-            string platoBoyutu;
-            string[] platoBoyutuArr;
+            string plateauInformation;
+            string[] plateauInformationArr;
 
             Console.WriteLine("Platoyu boyutunu giriniz.");
             do
             {
-                platoBoyutu = Console.ReadLine();
-                if (platoBoyutu.Split(' ').Length != 2)
+                plateauInformation = Console.ReadLine();
+                plateauInformationArr = plateauInformation.Split(' ');
+                if (plateauInformationArr.Length != 2)
                 {
                     Console.WriteLine("Platoyu boyutunu hatalı girdiniz lütfen tekrar deneyiniz.");
                 }
 
-            } while (platoBoyutu.Split(' ').Length != 2);
+            } while (plateauInformationArr.Length != 2);
 
-            platoBoyutuArr = platoBoyutu.Split(' ');
 
-            return new Plato(Convert.ToInt32(platoBoyutuArr[0]), Convert.ToInt32(platoBoyutuArr[1]));
+            return new Plateau(Convert.ToInt32(plateauInformationArr[0]), Convert.ToInt32(plateauInformationArr[1]));
 
         }
 
@@ -67,40 +71,49 @@ namespace Hepsiburada.Case
         /// <summary>
         /// Kullanıcıdan talimatlarla geziciler hakkında gerekli bilgiler alınıyor.
         /// </summary>
-        private static Gezgin GeziciBilgileriniAl(Plato plato)
+        /// <param name="plateau">Plato nesnesi.</param>
+        /// <returns>Geriye gezgin nesnesi döner</returns>
+        private static Rover GetRoverInformation(Plateau plateau)
         {
-            string geziciYeri, geziciHareketi = "";
-            string[] geziciYeriArr;
+            string roverLocation, movements = "";
+            string[] roverLocationArr;
 
-            int islemBilgisi;
+            int transactionInformation;
             do
             {
                 Console.WriteLine("Geziciyi nereye konuşlandıracaksınız ?");
 
-                geziciYeri = Console.ReadLine();
-                geziciYeriArr = geziciYeri.Split(' ');
+                roverLocation = Console.ReadLine();
+                roverLocationArr = roverLocation.Split(' ');
 
-                if (DogrulamaAraclari.KonumGirdisiDogruMu(plato, geziciYeriArr))
+                if (!ValidationTool.IsLocationEntryCorrect(plateau, roverLocationArr))
                 {
                     Console.WriteLine("Hatalı giriş yapıldı tekrar kontrol ederek giriş yapınız.");
-                    islemBilgisi = (int)(KomutDizini.Devam);
+                    transactionInformation = (int)(Command.Continue);
                     continue;
                 }
 
                 Console.WriteLine("Gezicinin izleyeceği adımları giriniz ? ");
-                geziciHareketi = Console.ReadLine();
-                islemBilgisi = 0;
+                movements = Console.ReadLine();
+                if (!ValidationTool.IsMovementEntryCorrect(movements.ToCharArray()))
+                {
+                    Console.WriteLine("Hatalı giriş yapıldı tekrar kontrol ederek giriş yapınız.");
+                    transactionInformation = (int)(Command.Continue);
+                    continue;
+                }
 
-            } while ((int)(KomutDizini.Devam) == islemBilgisi);
+                transactionInformation = 0;
 
-            Nokta nokta = new Nokta();
-            nokta.x = Convert.ToInt32(geziciYeriArr[0]);
-            nokta.y = Convert.ToInt32(geziciYeriArr[1]);
+            } while ((int)(Command.Continue) == transactionInformation);
 
-            var gezgin = new Gezgin(plato, nokta, Convert.ToChar(geziciYeriArr[2]));
-            gezgin.Ilerle(geziciHareketi);
+            Point point = new Point();
+            point.x = Convert.ToInt32(roverLocationArr[0]);
+            point.y = Convert.ToInt32(roverLocationArr[1]);
 
-            return gezgin;
+            var rover = new Rover(plateau, point, Convert.ToChar(roverLocationArr[2]));
+            rover.Go(movements);
+
+            return rover;
         }
 
     }

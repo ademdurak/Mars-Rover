@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Hepsiburada.Case
 {
-    public enum KomutDizini
+    public enum Command
     {
-        Sonlandir,
-        Devam
+        End,
+        Continue
     }
 }
 

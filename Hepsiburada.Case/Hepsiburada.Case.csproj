@@ -43,13 +43,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Nesneler\Gezgin.cs" />
-    <Compile Include="KomutDizini.cs" />
-    <Compile Include="Nesneler\Plato.cs" />
-    <Compile Include="Nesneler\Nokta.cs" />
+    <Compile Include="Concrete\Rover.cs" />
+    <Compile Include="Command.cs" />
+    <Compile Include="Concrete\Plateau.cs" />
+    <Compile Include="Concrete\Point.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Araclar\DogrulamaAraclari.cs" />
+    <Compile Include="Utilities\ValidationTool.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
